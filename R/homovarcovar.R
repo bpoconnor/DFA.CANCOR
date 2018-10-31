@@ -3,7 +3,7 @@
 
 homovarcovar <- function( donnes ) {
 
-cat('\n\n\nTests for Homogeneity of Variances & Covariances:\n')
+cat('\n\nTests for Homogeneity of Variances & Covariances:\n')
 
 grpnames <- unique(donnes[,1])
 
@@ -17,26 +17,26 @@ logdets <- matrix(-9999,ngroups,1) # for Box's M test
 for (lupeg in 1:ngroups) {
 	dum <- subset(donnes, donnes[,1] == lupeg)	
 	cat('\nCovariance matrix for Group', paste(grpnames[lupeg]),'\n\n')
-	print(round(cov(dum[,2:ncol(dum)]),2))
-	logdetgrps <- logdetgrps + (nrow(dum) - 1) * log(det(cov(dum[,2:ncol(dum)]))) # for Box's M test
-	logdets[lupeg,1] <- log(det(cov(dum[,2:ncol(dum)]))) # for Box's M test
+	print(round(stats::cov(dum[,2:ncol(dum)]),2))
+	logdetgrps <- logdetgrps + (nrow(dum) - 1) * log(det(stats::cov(dum[,2:ncol(dum)]))) # for Box's M test
+	logdets[lupeg,1] <- log(det(stats::cov(dum[,2:ncol(dum)]))) # for Box's M test
 }
 
 # Homogeneity of Variances
 # Bartlett Test of Homogeneity of Variances (parametric, for K samples)
-bb <- bartlett.test(x=(donnes[,c(2:ncol(donnes))]), g=donnes[,1], data=donnes)
+bb <- stats::bartlett.test(x=(donnes[,c(2:ncol(donnes))]), g=donnes[,1], data=donnes)
 cat('\n\nBartlett Test of Homogeneity of Variances (parametric):\n')
 cat('\nBartlett,s K-squared =', round(bb$statistic,3), '  df =', bb$parameter, '  p value =', round(bb$p.value,5) )
 
 # Figner-Killeen Test of Homogeneity of Variances (non parametric, for K samples)
-ff <- fligner.test(donnes[,c(2:ncol(donnes))], donnes[,1], data=donnes)
+ff <- stats::fligner.test(donnes[,c(2:ncol(donnes))], donnes[,1], data=donnes)
 cat('\n\n\nFigner-Killeen Test of Homogeneity of Variances (non parametric):\n')
 cat('\nchi-squared =', round(ff$statistic,3), '  df =', ff$parameter, '  p value =', round(ff$p.value,5) )
 
 # for the var-covar matrices from SPSS - requires Type III sums of squares
 outcome <- as.matrix(donnes[,c(2:ncol(donnes))])
-fit <- lm(outcome ~ as.factor(donnes[,c(1)]), data = donnes)
-sscp <- Anova(fit, type="III") #summary(sscp)
+fit <- stats::lm(outcome ~ as.factor(donnes[,c(1)]), data = donnes)
+sscp <- car::Anova(fit, type="III") #summary(sscp)
 sscpwith <- sscp$SSPE
 sscpbetw <- sscp$SSP$'as.factor(donnes[, c(1)])'
 
@@ -73,7 +73,7 @@ aminus <- df2 / (1 - c + (2/df2))
 Fminus <- (df2 * BoxM) / (df1 * (aminus - BoxM))
 if (c2 > c**2)  bigF <- Fplus
 if (c2 < c**2)  bigF <- Fminus
-pbigF <- pf(bigF, df1, df2, lower.tail=FALSE) # p level
+pbigF <- stats::pf(bigF, df1, df2, lower.tail=FALSE) # p level
 cat('\n\nBox Test of Equality of Covariance Matrices:\n')
 cat('\nLog Determinants:\n')
 #rownames(logdets) <- paste("Group ", 1:ngroups, sep="") 

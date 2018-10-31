@@ -26,10 +26,10 @@ umvn <- function(ContinuousVariables) {
 # cat('\n\n');   print(mvn3); cat('\n\n')
 
 
-res1 = mvn(data = ContinuousVariables,  mvnTest = "mardia", univariateTest = "SW") 
-res2 = mvn(data = ContinuousVariables,  mvnTest = "hz")
-res3 = mvn(data = ContinuousVariables,  mvnTest = "royston")
-res4 = mvn(data = ContinuousVariables,  mvnTest = "dh",  desc = FALSE)    
+res1 = MVN::mvn(data = ContinuousVariables,  mvnTest = "mardia", univariateTest = "SW") 
+res2 = MVN::mvn(data = ContinuousVariables,  mvnTest = "hz")
+res3 = MVN::mvn(data = ContinuousVariables,  mvnTest = "royston")
+res4 = MVN::mvn(data = ContinuousVariables,  mvnTest = "dh",  desc = FALSE)    
 
 
 cat('\n\nDescriptive Statistics:\n\n')

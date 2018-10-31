@@ -1,5 +1,6 @@
 
 
+
 DFA <- function( data, groups, variables, normtests='yes', priorprob='SIZES', predictive='yes') {
 
 cat('\n\n\n\nLinear Discriminant Function Analysis:\n')
@@ -41,6 +42,7 @@ sscps <- homovarcovar( donnes )
 
 # LDA from MASS package
 
+
 #  the lda function from MASS produces different raw, lda coefficients when different priors are used
 #  but SPSS produces the same coefficients regardless of the priors that are used
 #  to produce the SPSS results, use priors based on the group sizes, as in prior=(grpFreqs/sum(grpFreqs))
@@ -57,8 +59,10 @@ if (is.null(priorprob)) priorprob = 'SIZES'
 if (priorprob == 'EQUAL') priors = matrix((1/ngroups), 1, ngroups) 
 if (priorprob == 'SIZES') priors = grpFreqs/sum(grpFreqs) 
 
-ldaoutput <- lda(x = as.matrix(donnes[,2:ncol(donnes)]), grouping=donnes[,1], prior=priors)
-lda.values <- predict(ldaoutput, donnes[,2:ncol(donnes)]) # obtain scores on the DFs
+ldaoutput <- MASS::lda(x = as.matrix(donnes[,2:ncol(donnes)]), grouping=donnes[,1], prior=priors)
+
+lda.values <- stats::predict(ldaoutput, donnes[,2:ncol(donnes)]) # obtain scores on the DFs
+
 
 
 # eigenvalues, canonical correlations, & one-way anovas on the DFs
@@ -71,14 +75,14 @@ names(ttestDFoutput) = c(paste("Function ", 1:ncol(ldaoutput$scaling), sep="") )
 for (luper in 1:nrow(evals)) {
 	dd <- data.frame( dfc[,1], dfc[luper+1] )
 	colnames(dd) <- c('grp','dv')
-	fit <- lm(dv ~ as.factor(grp), data = dd)
-	betwss <- anova(fit)["as.factor(grp)", "Sum Sq"]
-	withss <- anova(fit)["Residuals", "Sum Sq"]
+	fit <- stats::lm(dv ~ as.factor(grp), data = dd)
+	betwss <- stats::anova(fit)["as.factor(grp)", "Sum Sq"]
+	withss <- stats::anova(fit)["Residuals", "Sum Sq"]
  	anovaDFoutput[luper,1] <- as.numeric(summary(fit)["r.squared"])
-	anovaDFoutput[luper,2] <- anova(fit)["as.factor(grp)","F value"]
-	anovaDFoutput[luper,3] <- anova(fit)["as.factor(grp)","Df"]
+	anovaDFoutput[luper,2] <- stats::anova(fit)["as.factor(grp)","F value"]
+	anovaDFoutput[luper,3] <- stats::anova(fit)["as.factor(grp)","Df"]
 	anovaDFoutput[luper,4] <- fit$df.residual
-	anovaDFoutput[luper,5] <- anova(fit)["as.factor(grp)","Pr(>F)"]
+	anovaDFoutput[luper,5] <- stats::anova(fit)["as.factor(grp)","Pr(>F)"]
 
 	ttestDFoutput[[luper]] <- ttestboc(dd, varest=FALSE)			
 
@@ -101,34 +105,58 @@ p <- length(variables)
 q <- length(evals[,4])
 
 
-invisible(capture.output( pW <-  ((p.asym(rho, N, p, q, tstat = "Wilks"))) ))
+invisible(utils::capture.output( pW <-  ((CCP::p.asym(rho, N, p, q, tstat = "Wilks"))) ))
 dmat <- cbind(pW$stat, pW$approx, pW$df1, pW$df2, pW$p.value )
 colnames(dmat) <- c('            Wilks Lambda', '     F-approx. ', '     df1', '          df2', '         p')
 rownames(dmat) <- paste(1:nrow(dmat), paste("through ", nrow(dmat), sep = ""))
 print(round(dmat,4)); cat('\n\n')
 
-invisible(capture.output( pH <- p.asym(rho, N, p, q, tstat = "Hotelling") ))
+invisible(utils::capture.output( pH <- CCP::p.asym(rho, N, p, q, tstat = "Hotelling") ))
 dmat <- cbind(pH$stat, pH$approx, pH$df1, pH$df2, pH$p.value )
 colnames(dmat) <- c('  Hotelling-Lawley Trace', '     F-approx. ', '     df1', '          df2', '         p')
 rownames(dmat) <- paste(1:nrow(dmat), paste("through ", nrow(dmat), sep = ""))
 print(round(dmat,4)); cat('\n\n')
 
-invisible(capture.output( pP <- p.asym(rho, N, p, q, tstat = "Pillai") ))
+invisible(utils::capture.output( pP <- CCP::p.asym(rho, N, p, q, tstat = "Pillai") ))
 dmat <- cbind(pP$stat, pP$approx, pP$df1, pP$df2, pP$p.value )
 colnames(dmat) <- c('   Pillai-Bartlett Trace', '     F-approx. ', '     df1', '          df2', '         p')
 rownames(dmat) <- paste(1:nrow(dmat), paste("through ", nrow(dmat), sep = ""))
 print(round(dmat,4)); cat('\n\n')
 
-invisible(capture.output( pR <- p.asym(rho, N, p, q, tstat = "Roy") ))
+invisible(utils::capture.output( pR <- CCP::p.asym(rho, N, p, q, tstat = "Roy") ))
 dmat <- cbind(pR$stat, pR$approx, pR$df1, pR$df2, pR$p.value )
 colnames(dmat) <- c('      Roy\'s Largest Root', '     F-approx. ', '     df1', '          df2', '         p')
 rownames(dmat) <- paste(1:nrow(dmat), paste("through ", nrow(dmat), sep = ""))
 print(round(dmat,4)); cat('\n\n')
 
-cat('\n\n\n\nCanonical Discriminant Function (raw) Coefficients:\n')colnames(ldaoutput$scaling) <-  c(paste("Function ", 1:ncol(ldaoutput$scaling), sep="") )
-print(round(ldaoutput$scaling,3))# centering each variable within groupsgroup.center <- function(var,grp) { return(var-tapply(var,grp,mean,na.rm=T)[grp]) }cdonnes <- matrix(-9999,nrow(donnes),(ncol(donnes)-1))dfc <- cbind(  donnes[,1], lda.values$x   )cdfc <- matrix(-9999,nrow(dfc),(ncol(dfc)-1))for (lupec in 1:(ncol(donnes)-1)) { cdonnes[,lupec] <- group.center( donnes[,(lupec+1)], donnes[,1] ) }for (lupec in 1:(ncol(dfc)-1)) { cdfc[,lupec] <- group.center( dfc[,(lupec+1)], dfc[,1] ) }cdonnes <- cbind( donnes[,1], cdonnes) # placing the grouping variable back in the centered matrixcdonnesdf <- data.frame(cdonnes)structCoef <- cor( x = cdonnes[,2:ncol(cdonnes)], y = cdfc) ; # round(structCoef,2)rownames(structCoef) <- rownames(ldaoutput$scaling)colnames(structCoef) <- colnames(ldaoutput$scaling)cat('\n\nStructure Coefficients:\n')colnames(structCoef) <-  c(paste("Function ", 1:ncol(structCoef), sep="") )
-print(round(structCoef,3))# standardized coefficientspooledSDs <- as.matrix(apply(cdonnes, 2, FUN = sd) ) # cdonnes contains the mean-centered datastandCoef <- (pooledSDs[2:nrow(pooledSDs),]) * ldaoutput$scalingcat('\n\nStandardized Coefficients:\n')colnames(standCoef) <-  c(paste("Function ", 1:ncol(standCoef), sep="") )
+
+cat('\n\n\n\nCanonical Discriminant Function (raw) Coefficients:\n')
+colnames(ldaoutput$scaling) <-  c(paste("Function ", 1:ncol(ldaoutput$scaling), sep="") )
+print(round(ldaoutput$scaling,3))
+
+# centering each variable within groups
+group.center <- function(var,grp) { return(var-tapply(var,grp,mean,na.rm=T)[grp]) }
+cdonnes <- matrix(-9999,nrow(donnes),(ncol(donnes)-1))
+dfc <- cbind(  donnes[,1], lda.values$x   )
+cdfc <- matrix(-9999,nrow(dfc),(ncol(dfc)-1))
+for (lupec in 1:(ncol(donnes)-1)) { cdonnes[,lupec] <- group.center( donnes[,(lupec+1)], donnes[,1] ) }
+for (lupec in 1:(ncol(dfc)-1)) { cdfc[,lupec] <- group.center( dfc[,(lupec+1)], dfc[,1] ) }
+cdonnes <- cbind( donnes[,1], cdonnes) # placing the grouping variable back in the centered matrix
+cdonnesdf <- data.frame(cdonnes)
+structCoef <- stats::cor( x = cdonnes[,2:ncol(cdonnes)], y = cdfc) ; # round(structCoef,2)
+rownames(structCoef) <- rownames(ldaoutput$scaling)
+colnames(structCoef) <- colnames(ldaoutput$scaling)
+cat('\n\nStructure Coefficients:\n')
+colnames(structCoef) <-  c(paste("Function ", 1:ncol(structCoef), sep="") )
+print(round(structCoef,3))
+
+# standardized coefficients
+pooledSDs <- as.matrix(apply(cdonnes, 2, FUN = sd) ) # cdonnes contains the mean-centered data
+standCoef <- (pooledSDs[2:nrow(pooledSDs),]) * ldaoutput$scaling
+cat('\n\nStandardized Coefficients:\n')
+colnames(standCoef) <-  c(paste("Function ", 1:ncol(standCoef), sep="") )
 print(round(standCoef,3))
+
 
 
 sscpwith <- sscps$sscpwith
@@ -151,13 +179,13 @@ ldfscoresZ <- as.matrix(cbind(donnes[,1],scale(lda.values$x)))
 centroidsZ <- centroidSDsZ <- matrix(-9999,ngroups,(ncol(ldfscores)-1))
 
 for (lupec in 2:ncol(ldfscores)) {
-	aggM  <- aggregate( formula = ldfscores[,lupec] ~ ldfscores[,1], data = ldfscores, FUN = mean )
-	aggSD <- aggregate( formula = ldfscores[,lupec] ~ ldfscores[,1], data = ldfscores, FUN = sd )
+	aggM  <- stats::aggregate( formula = ldfscores[,lupec] ~ ldfscores[,1], data = ldfscores, FUN = mean )
+	aggSD <- stats::aggregate( formula = ldfscores[,lupec] ~ ldfscores[,1], data = ldfscores, FUN = sd )
 	centroids[,(lupec-1)] <- aggM[,2]
 	centroidSDs[,(lupec-1)] <- aggSD[,2]
 
-	aggMZ  <- aggregate( formula = ldfscoresZ[,lupec] ~ ldfscoresZ[,1], data = ldfscoresZ, FUN = mean )
-	aggSDZ <- aggregate( formula = ldfscoresZ[,lupec] ~ ldfscoresZ[,1], data = ldfscoresZ, FUN = sd )
+	aggMZ  <- stats::aggregate( formula = ldfscoresZ[,lupec] ~ ldfscoresZ[,1], data = ldfscoresZ, FUN = mean )
+	aggSDZ <- stats::aggregate( formula = ldfscoresZ[,lupec] ~ ldfscoresZ[,1], data = ldfscoresZ, FUN = sd )
 	centroidsZ[,(lupec-1)] <- aggMZ[,2]
 	centroidSDsZ[,(lupec-1)] <- aggSDZ[,2]
 }
@@ -199,14 +227,14 @@ names(ttestDVoutput)=variables
 for (lupec in 1:length(variables)) {
 	dd <- data.frame(  donnes[,1], donnes[,(lupec+1)]   )
 	colnames(dd) <- c('grp','dv')
-	fit <- lm(dv ~ as.factor(grp), data = dd)
-	betwss <- anova(fit)["as.factor(grp)", "Sum Sq"]
-	withss <- anova(fit)["Residuals", "Sum Sq"]
+	fit <- stats::lm(dv ~ as.factor(grp), data = dd)
+	betwss <- stats::anova(fit)["as.factor(grp)", "Sum Sq"]
+	withss <- stats::anova(fit)["Residuals", "Sum Sq"]
  	anovaDVoutput[lupec,1] <- as.numeric(summary(fit)["r.squared"])
-	anovaDVoutput[lupec,2] <- anova(fit)["as.factor(grp)","F value"]
-	anovaDVoutput[lupec,3] <- anova(fit)["as.factor(grp)","Df"]
+	anovaDVoutput[lupec,2] <- stats::anova(fit)["as.factor(grp)","F value"]
+	anovaDVoutput[lupec,3] <- stats::anova(fit)["as.factor(grp)","Df"]
 	anovaDVoutput[lupec,4] <- fit$df.residual
-	anovaDVoutput[lupec,5] <- anova(fit)["as.factor(grp)","Pr(>F)"]
+	anovaDVoutput[lupec,5] <- stats::anova(fit)["as.factor(grp)","Pr(>F)"]
 	
 	ttestDVoutput[[lupec]] <- ttestboc(dd, varest=FALSE)			
 }
@@ -232,21 +260,21 @@ print(ttestDVoutput)
 #colnames(centroidsZ) <-  c( "", paste("DF ", 1:(ncol(centroidSDsZ)-1), sep="") )
 colnames(centroidsZ) <-  c(paste("DF ", 1:ncol(centroidSDsZ), sep="") )
 
-matplot( 1:length(grpnames), centroidsZ[,1:2], type = "l", lty=1, lwd=3, 
+graphics::matplot( 1:length(grpnames), centroidsZ[,1:2], type = "l", lty=1, lwd=3, 
         xaxt='n', xlab=groups, cex.axis=1.2, cex.lab = 1.3,
         ylab='Discriminant Function z Scores', ylim = c( -3, 3 ), cex.axis=1.2         )
-axis(side=1, at=grpnames, labels=grpnames, xlab="groups")
+graphics::axis(side=1, at=grpnames, labels=grpnames, xlab="groups")
 
 
-# matplot(centroidsZ[,1], centroidsZ[,2:3], type = "l", lty=1, lwd=3, 
+# graphics::matplot(centroidsZ[,1], centroidsZ[,2:3], type = "l", lty=1, lwd=3, 
         # xaxt='n', xlab=groups, cex.axis=1.2, cex.lab = 1.3,
         # ylab='Discriminant Function z Scores', ylim = c( -3, 3 ), cex.axis=1.2         )
-#axis(side = 1, at = x,labels = T, xlab='Group')
-#axis(side=1, at=centroidsZ[,1], labels=centroidsZ[,1], xlab="groups")
+#graphics::axis(side = 1, at = x,labels = T, xlab='Group')
+#graphics::axis(side=1, at=centroidsZ[,1], labels=centroidsZ[,1], xlab="groups")
 
-title(main='Mean Standardized Discriminant Function Scores for the Groups')
-#legend("topright", legend = colnames(centroidsZ[,2:3]), bty="n", lwd=2, col=1:ncol(centroidsZ[,2:3]) )
-legend("topright", legend = colnames(centroidsZ), bty="n", lwd=2, col=1:ncol(centroidsZ) )
+graphics::title(main='Mean Standardized Discriminant Function Scores for the Groups')
+#graphics::legend("topright", legend = colnames(centroidsZ[,2:3]), bty="n", lwd=2, col=1:ncol(centroidsZ[,2:3]) )
+graphics::legend("topright", legend = colnames(centroidsZ), bty="n", lwd=2, col=1:ncol(centroidsZ) )
 
 
 
@@ -301,14 +329,14 @@ print(round(prop.table(freqs, 2),2))
 
 # kappas
 cat('\n\nAgreement (kappas) between the Predicted and Original Group Memberships:\n\n')
-kappas_cvo <- kappas(na.omit(cbind( lda.values$class, donnes[,1] )) )
+kappas_cvo <- kappas(stats::na.omit(cbind( lda.values$class, donnes[,1] )) )
 print(round(kappas_cvo,3))
 
 
 # Frequencies: Original vs Cross-Validated (leave-one-out cross-validation)
 
 # classifications from leave-one-out cross-validation
-ldaoutputCV <- lda(x = as.matrix(donnes[,c(2:ncol(donnes))]), grouping=donnes[,1], prior=priors, CV = TRUE)
+ldaoutputCV <- MASS::lda(x = as.matrix(donnes[,c(2:ncol(donnes))]), grouping=donnes[,1], prior=priors, CV = TRUE)
 
 freqs_cvp <- data.frame( cbind( ldaoutputCV$class, lda.values$class  ) )
 colnames(freqs_cvp) <-  c("Cross-Validated", "Predicted") 
@@ -344,12 +372,12 @@ print(round(prop.table(freqsCVP, 2),2))
 
 # kappas
 cat('\n\nAgreement (kappas) between the Cross-Validated and Original Group Memberships:\n\n')
-kappas_cvo <- kappas(na.omit(cbind( ldaoutputCV$class, donnes[,1] )) )
+kappas_cvo <- kappas(stats::na.omit(cbind( ldaoutputCV$class, donnes[,1] )) )
 print(round(kappas_cvo,3))
 
 # kappas
 cat('\n\nAgreement (kappas) between the Cross-Validated and Predicted Group Memberships:\n\n')
-kappas_cvp <- kappas(na.omit(cbind( ldaoutputCV$class, lda.values$class )) )
+kappas_cvp <- kappas(stats::na.omit(cbind( ldaoutputCV$class, lda.values$class )) )
 print(round(kappas_cvp,3))
 cat('\n\n\n')
 
@@ -368,4 +396,6 @@ DFAoutput <- list(
 return(invisible(DFAoutput))
 
 }
-
+
+
+

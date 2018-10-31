@@ -1,0 +1,16 @@
+Package: DFA.CANCOR
+Type: Package
+Title: Linear Discriminant Function and Canonical Correlation Analysis
+Version: 0.1.0
+Date: 2018-10-29
+Author: Brian P. O'Connor 
+Maintainer: Brian P. O'Connor  <brian.oconnor@ubc.ca>
+Description:
+  Functions that produce SPSS- and SAS-like output for linear discriminant 
+  function analysis and canonical correlation analysis.
+Imports: MASS, car, irr, CCA, CCP, MVN, yacca, graphics, utils
+LazyLoad: yes
+LazyData: yes
+License: GPL (>= 2)
+NeedsCompilation: no
+Packaged: 2018-10-29 06:35:35 UTC; brianoconnor

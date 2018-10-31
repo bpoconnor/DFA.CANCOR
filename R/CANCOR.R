@@ -12,12 +12,12 @@ umvn(cbind(set1data,set2data))
 
 
 # Pearson correlations
-cat('\n\nPearson correlations for Set 1:\n\n');print(round(cor(set1data),2))
-cat('\n\nPearson correlations for Set 2:\n\n');print(round(cor(set2data),2))
-cat('\n\nPearson correlations between Set 1 & Set 2:\n\n');print(round(cor(set2data,set1data),2))
+cat('\n\nPearson correlations for Set 1:\n\n');print(round(stats::cor(set1data),2))
+cat('\n\nPearson correlations for Set 2:\n\n');print(round(stats::cor(set2data),2))
+cat('\n\nPearson correlations between Set 1 & Set 2:\n\n');print(round(stats::cor(set2data,set1data),2))
 
 
-CCoutput <- cc(set1data, set2data) # cc function from the CCA package
+CCoutput <- CCA::cc(set1data, set2data) # cc function from the CCA package
 
 
 cat('\n\n\nMultivariate peel-down significance tests:\n\n')  # using p.asym from the CCP package
@@ -28,25 +28,25 @@ p <- ncol(set1data)
 q <- ncol(set2data)
 
 
-invisible(capture.output( pW <-  ((p.asym(rho, N, p, q, tstat = "Wilks"))) ))
+invisible(utils::capture.output( pW <-  ((CCP::p.asym(rho, N, p, q, tstat = "Wilks"))) ))
 dmat <- cbind(pW$stat, pW$approx, pW$df1, pW$df2, pW$p.value )
 colnames(dmat) <- c('            Wilks Lambda', '     F-approx. ', '     df1', '          df2', '         p')
 rownames(dmat) <- paste(1:nrow(dmat), paste("through ", nrow(dmat), sep = ""))
 print(round(dmat,4)); cat('\n\n')
 
-invisible(capture.output( pH <- p.asym(rho, N, p, q, tstat = "Hotelling") ))
+invisible(utils::capture.output( pH <- CCP::p.asym(rho, N, p, q, tstat = "Hotelling") ))
 dmat <- cbind(pH$stat, pH$approx, pH$df1, pH$df2, pH$p.value )
 colnames(dmat) <- c('  Hotelling-Lawley Trace', '     F-approx. ', '     df1', '          df2', '         p')
 rownames(dmat) <- paste(1:nrow(dmat), paste("through ", nrow(dmat), sep = ""))
 print(round(dmat,4)); cat('\n\n')
 
-invisible(capture.output( pP <- p.asym(rho, N, p, q, tstat = "Pillai") ))
+invisible(utils::capture.output( pP <- CCP::p.asym(rho, N, p, q, tstat = "Pillai") ))
 dmat <- cbind(pP$stat, pP$approx, pP$df1, pP$df2, pP$p.value )
 colnames(dmat) <- c('   Pillai-Bartlett Trace', '     F-approx. ', '     df1', '          df2', '         p')
 rownames(dmat) <- paste(1:nrow(dmat), paste("through ", nrow(dmat), sep = ""))
 print(round(dmat,4)); cat('\n\n')
 
-invisible(capture.output( pR <- p.asym(rho, N, p, q, tstat = "Roy") ))
+invisible(utils::capture.output( pR <- CCP::p.asym(rho, N, p, q, tstat = "Roy") ))
 dmat <- cbind(pR$stat, pR$approx, pR$df1, pR$df2, pR$p.value )
 colnames(dmat) <- c('      Roy\'s Largest Root', '     F-approx. ', '     df1', '          df2', '         p')
 rownames(dmat) <- paste(1:nrow(dmat), paste("through ", nrow(dmat), sep = ""))
@@ -56,8 +56,8 @@ print(round(dmat,4)); cat('\n\n')
 # bivariate correlations for the canonical variates
 bicortests <- matrix(-9999,ncol(CCoutput$scores$xscores),5)
 for (nfunction in 1:ncol(CCoutput$scores$xscores)) {
-	correl <- cor(CCoutput$scores$xscores[,nfunction],CCoutput$scores$yscores[,nfunction] )	
-	dd <- cor.test( CCoutput$scores$xscores[,nfunction],CCoutput$scores$yscores[,nfunction]) 	
+	correl <- stats::cor(CCoutput$scores$xscores[,nfunction],CCoutput$scores$yscores[,nfunction] )	
+	dd <- stats::cor.test( CCoutput$scores$xscores[,nfunction],CCoutput$scores$yscores[,nfunction]) 	
 	bicortests[nfunction,] <- cbind(correl, correl**2, dd$statistic, dd$parameter, dd$p.value)
 }
 cat('\n\n\nCanonical correlations:\n\n')
@@ -96,7 +96,7 @@ colnames(struct22) <- paste("     CV", 1:ncol(struct22),sep = "")
 print(round(struct22,2))
 
 # standardized canonical coefficients for Set 1
-s1 <- diag(sqrt(diag(cov(set1data)))) #  diagonal matrix of sd's
+s1 <- diag(sqrt(diag(stats::cov(set1data)))) #  diagonal matrix of sd's
 rownames(s1) <- colnames(set1data)
 cat('\n\n\nStandardized coefficients for Set 1 variables:\n\n')
 stand1 <- s1 %*% CCoutput$xcoef
@@ -104,7 +104,7 @@ colnames(stand1) <- paste("     CV", 1:ncol(stand1),sep = "")
 print(round(stand1,2))
 
 # standardized canonical coefficients for Set 2
-s2 <- diag(sqrt(diag(cov(set2data)))) #  diagonal matrix of sd's
+s2 <- diag(sqrt(diag(stats::cov(set2data)))) #  diagonal matrix of sd's
 rownames(s2) <- colnames(set2data)
 cat('\n\nStandardized coefficients for Set 2 variables:\n\n')
 stand2 <- s2 %*% CCoutput$ycoef
@@ -116,10 +116,10 @@ print(round(stand2,2))
 if (plot == 'yes' | plot == 'YES' | is.null(plot)) {
 	if (is.null(plot)) plotCV = 1
 #	cca.fit <- yacca::cca(set1data, set2data)
-#	helio.plot(cca.fit, x.name="Set 1", y.name="Set 2", cv=plotCV)
+#	yacca::helio.plot(cca.fit, x.name="Set 1", y.name="Set 2", cv=plotCV)
 	boc.fit <- list( xstructcorr=struct11, ystructcorr=struct22, xstructcorrsq=struct11**2, ystructcorrsq=struct22**2,
                xlab=rownames(struct11), ylab=rownames(struct22) )
-	helio.plot(boc.fit, x.name="Set 1", y.name="Set 2", cv=plotCV)
+	yacca::helio.plot(boc.fit, x.name="Set 1", y.name="Set 2", cv=plotCV)
 	cat('\n\n\nThe plot is provided by the yacca package. Helio plots display data in radial bars, with larger ')
 	cat('\nvalues pointing outward from a base reference circle and smaller (more negative) values pointing inward.')
 }

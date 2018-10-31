@@ -31,7 +31,7 @@ for (lupe1 in 1:(ngroups-1)) {
 		newdon = data.frame(dum[,1], dum[,2])
 
 
-#		newdon <- na.omit(cbind( as.numeric(donnesT[,1]), donnesT[,2] ))
+#		newdon <- stats::na.omit(cbind( as.numeric(donnesT[,1]), donnesT[,2] ))
 
 		groupmin <- min(newdon[,1])
 		groupmax <- max(newdon[,1])
@@ -39,8 +39,8 @@ for (lupe1 in 1:(ngroups-1)) {
 		mgrp1 <- mean(subset(newdon[,2],newdon[,1]==groupmin))
 		mgrp2 <- mean(subset(newdon[,2],newdon[,1]==groupmax))
 
-		sdgrp1 <- sd(subset(newdon[,2],newdon[,1]==groupmin))
-		sdgrp2 <- sd(subset(newdon[,2],newdon[,1]==groupmax))
+		sdgrp1 <- stats::sd(subset(newdon[,2],newdon[,1]==groupmin))
+		sdgrp2 <- stats::sd(subset(newdon[,2],newdon[,1]==groupmax))
 
 		N1 <- nrow(subset(newdon,newdon[,1]==groupmin))
 		N2 <- nrow(subset(newdon,newdon[,1]==groupmax))
@@ -48,7 +48,7 @@ for (lupe1 in 1:(ngroups-1)) {
 		SE1 <- sdgrp1 / sqrt(N1)
 		SE2 <- sdgrp2 / sqrt(N2)
 
-		tresults <- t.test(newdon[,2]~newdon[,1],data=newdon, var.equal=varest); # t-test
+		tresults <- stats::t.test(newdon[,2]~newdon[,1],data=newdon, var.equal=varest); # t-test
 		tgroups  <- tresults$statistic
 		dfgroups <- tresults$parameter
 		plevel   <- tresults$p.value
