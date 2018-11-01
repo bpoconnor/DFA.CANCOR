@@ -6,16 +6,16 @@ homovarcovar <- function( donnes ) {
 cat('\n\nTests for Homogeneity of Variances & Covariances:\n')
 
 grpnames <- unique(donnes[,1])
+ngroups <- length(grpnames)
 
-donnes[,1] <- as.numeric((donnes[,1]))
-ngroups <- max(donnes[,1])
-donnes[,1] <- factor( donnes[,1], ordered = FALSE)
+if (is.factor(donnes[,1]) == F)  donnes[,1] <- factor( donnes[,1], ordered = FALSE, labels=grpnames)
+
 grpFreqs <- as.matrix(table(donnes[,c(1)]))
 
 logdetgrps <- 0 # Box's M test
 logdets <- matrix(-9999,ngroups,1) # for Box's M test
 for (lupeg in 1:ngroups) {
-	dum <- subset(donnes, donnes[,1] == lupeg)	
+	dum <- subset(donnes, donnes[,1] == grpnames[lupeg] )
 	cat('\nCovariance matrix for Group', paste(grpnames[lupeg]),'\n\n')
 	print(round(stats::cov(dum[,2:ncol(dum)]),2))
 	logdetgrps <- logdetgrps + (nrow(dum) - 1) * log(det(stats::cov(dum[,2:ncol(dum)]))) # for Box's M test

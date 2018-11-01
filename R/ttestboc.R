@@ -4,7 +4,7 @@
 ############################# T tests  ############################################################
 
 
-"ttestboc" <-  function (donnesT, varest) {
+"ttestboc" <-  function (donnesT, varest=FALSE) {
 	
 # reads raw data; the groups variable is in 1st column; the DV(s) are in the subsequent columns
 # the groups variable can be categorical
@@ -17,6 +17,10 @@
 # p.adjust.methods options are "holm", "hochberg", "hommel", "bonferroni", "BH", "BY", "fdr", "none"
 
 #cat("\n\nGroups t-test:\n")
+
+grpnames <- as.vector(as.matrix(donnesT[,1])) # group names, in the same order as in the data matrix
+grpnames <- unique(grpnames)
+grpnums  <- seq(1:length(grpnames))
 
 donnesT[,1] <- as.numeric(donnesT[,1])
 
@@ -59,19 +63,22 @@ for (lupe1 in 1:(ngroups-1)) {
 		# d effect size -- from R&R p 303 General Formula  best, because covers = & not = Ns
 		deffsiz = (tgroups * (N1+N2)) / ( sqrt(dfgroups) * sqrt(N1*N2) )
 
-		results <- cbind( groupmin, N1, round(mgrp1,1), round(sdgrp1,2), groupmax, N2, round(mgrp2,1), round(sdgrp2,2),
+		results <- cbind( groupmin, N1, round(mgrp1,2), round(sdgrp1,2), groupmax, N2, round(mgrp2,2), round(sdgrp2,2),
 		           round(tgroups,2), round(dfgroups,2), round(plevel,5), round(reffsiz,2), round(deffsiz,2) )
 
 		results <- as.matrix(cbind(results))
-		# dimnames(results) <- list(rep("", dim(results)[1]))
-		# colnames(results) <- c("Group","   N1"," Mean1","  SD1","Group","     N2"," Mean2","  SD2","        t","  df","      p","   reffsiz"," deffsiz")
-		# print(round(results,3))
 		resultsM <- rbind( resultsM, results)
 	}  	
 }
 resultsM <- resultsM[-1,]
-dimnames(resultsM) <- list(rep("", dim(resultsM)[1]))
-colnames(resultsM) <- c("Group","  N1"," Mean1","  SD1","   Group","  N2"," Mean2","  SD2","         t","      df","        p","   r effsize","  d effsize")
 
-return(invisible(resultsM))
+resultsM2 <- data.frame(resultsM)
+for (lupe in 1:nrow(resultsM)) {
+	resultsM2[lupe,1] <- grpnames[resultsM[lupe,1]]
+	resultsM2[lupe,5] <- grpnames[resultsM[lupe,5]]
+}
+rownames(resultsM2) <- c()
+colnames(resultsM2) <- c("Group","  N1"," Mean1","  SD1","   Group","  N2"," Mean2","  SD2","         t","      df","        p","   r effsize","  d effsize")
+
+return(invisible(resultsM2))
 }
