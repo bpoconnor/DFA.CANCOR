@@ -64,7 +64,7 @@ for (lupe1 in 1:(ngroups-1)) {
 		deffsiz = (tgroups * (N1+N2)) / ( sqrt(dfgroups) * sqrt(N1*N2) )
 
 		results <- cbind( groupmin, N1, round(mgrp1,2), round(sdgrp1,2), groupmax, N2, round(mgrp2,2), round(sdgrp2,2),
-		           round(tgroups,2), round(dfgroups,2), round(plevel,5), round(reffsiz,2), round(deffsiz,2) )
+		           round(tgroups,2), round(dfgroups,2), round(plevel,5), round(reffsiz,2), round(abs(deffsiz),2) )
 
 		results <- as.matrix(cbind(results))
 		resultsM <- rbind( resultsM, results)
@@ -78,7 +78,7 @@ for (lupe in 1:nrow(resultsM)) {
 	resultsM2[lupe,5] <- grpnames[resultsM[lupe,5]]
 }
 rownames(resultsM2) <- c()
-colnames(resultsM2) <- c("Group","  N1"," Mean1","  SD1","   Group","  N2"," Mean2","  SD2","         t","      df","        p","   r effsize","  d effsize")
+colnames(resultsM2) <- c("Group"," N1"," Mean1","  SD1"," Group"," N2"," Mean2","  SD2","     t","    df","        p","  r effsize","  d effsize")
 
 return(invisible(resultsM2))
 }

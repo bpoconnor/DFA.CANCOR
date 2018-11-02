@@ -28,7 +28,7 @@ if (is.null(normtests) | normtests == 'YES' | normtests == 'yes') {
 	cat('\n\nGroup statistics\n\n')
 	for (lupeg in 1:ngroups) { 
 		dum <- subset(donnes, donnes[,1] == grpnames[lupeg])
-		cat('\n\nGroup ', paste(grpnames[lupeg]),':\n')
+		cat('\n\nGroup', paste(grpnames[lupeg]),'\n')
 		umvn(dum[,2:ncol(dum)]) 
 	}
 }
@@ -104,26 +104,26 @@ q <- length(evals[,4])
 
 
 invisible(utils::capture.output(pW <-  ((CCP::p.asym(rho, N, p, q, tstat = "Wilks")))))
-dmat <- cbind(pW$stat, pW$approx, pW$df1, pW$df2, pW$p.value)
-colnames(dmat) <- c('            Wilks Lambda', '     F-approx. ', '     df1', '          df2', '         p')
+dmat <- cbind(round(pW$stat,2), round(pW$approx,2), pW$df1, pW$df2, round(pW$p.value,5))
+colnames(dmat) <- c('            Wilks Lambda', '   F-approx. ', '  df1', '    df2', '         p')
 rownames(dmat) <- paste(1:nrow(dmat), paste("through ", nrow(dmat), sep = ""))
-print(round(dmat,4)); cat('\n\n')
+print((dmat)); cat('\n\n')
 
 invisible(utils::capture.output(pH <- CCP::p.asym(rho, N, p, q, tstat = "Hotelling")))
-dmat <- cbind(pH$stat, pH$approx, pH$df1, pH$df2, pH$p.value)
-colnames(dmat) <- c('  Hotelling-Lawley Trace', '     F-approx. ', '     df1', '          df2', '         p')
+dmat <- cbind(round(pH$stat,2), round(pH$approx,2), pH$df1, pH$df2, round(pH$p.value,5))
+colnames(dmat) <- c('  Hotelling-Lawley Trace', '   F-approx. ', '  df1', '    df2', '         p')
 rownames(dmat) <- paste(1:nrow(dmat), paste("through ", nrow(dmat), sep = ""))
 print(round(dmat,4)); cat('\n\n')
 
 invisible(utils::capture.output(pP <- CCP::p.asym(rho, N, p, q, tstat = "Pillai")))
-dmat <- cbind(pP$stat, pP$approx, pP$df1, pP$df2, pP$p.value)
-colnames(dmat) <- c('   Pillai-Bartlett Trace', '     F-approx. ', '     df1', '          df2', '         p')
+dmat <- cbind(round(pP$stat,2), round(pP$approx,2), pP$df1, pP$df2, round(pP$p.value,5))
+colnames(dmat) <- c('   Pillai-Bartlett Trace', '   F-approx. ', '  df1', '    df2', '         p')
 rownames(dmat) <- paste(1:nrow(dmat), paste("through ", nrow(dmat), sep = ""))
 print(round(dmat,4)); cat('\n\n')
 
 invisible(utils::capture.output(pR <- CCP::p.asym(rho, N, p, q, tstat = "Roy")))
-dmat <- cbind(pR$stat, pR$approx, pR$df1, pR$df2, pR$p.value)
-colnames(dmat) <- c('      Roy\'s Largest Root', '     F-approx. ', '     df1', '          df2', '         p')
+dmat <- cbind(round(pR$stat,2), round(pR$approx,2), pR$df1, pR$df2, round(pR$p.value,5))
+colnames(dmat) <- c('      Roy\'s Largest Root', '   F-approx. ', '  df1', '    df2', '         p')
 rownames(dmat) <- paste(1:nrow(dmat), paste("through ", nrow(dmat), sep = ""))
 print(round(dmat,4)); cat('\n\n')
 
@@ -170,7 +170,7 @@ print(round(standCoefSPSS,3))
 
 	
 # group means & SDs on the raw ldfs
-ldfscores <- data.frame(donnes[,1],lda.values$x)
+ldfscores  <- data.frame(donnes[,1],lda.values$x)
 ldfscoresZ <- data.frame(donnes[,1],scale(lda.values$x))
 centroids <- centroidSDs <- centroidsZ <- centroidSDsZ <- matrix(-9999,ngroups,(ncol(ldfscores)-1))
 for (lupec in 2:ncol(ldfscores)) {
@@ -184,7 +184,7 @@ for (lupec in 2:ncol(ldfscores)) {
 	centroidsZ[,(lupec-1)] <- aggMZ[,2]
 	centroidSDsZ[,(lupec-1)] <- aggSDZ[,2]
 }
-cat('\n\n\nFunctions at Group Centroids:\n')
+cat('\n\n\nFunctions at Group Centroids\n')
 cat('\nUnstandardized canonical discriminant functions evaluated at group means:\n\n')
 rownames(centroids) <- c(paste("Group ", aggM[,1], sep="")) 
 colnames(centroids) <- c(paste("Function ", 1:(ncol(centroids)), sep=""))
@@ -233,8 +233,8 @@ for (lupec in 1:length(variables)) {
 	
 	ttestDVoutput[[lupec]] <- ttestboc(dd, varest=FALSE)			
 }
-cat('\n\n\n\nOne-way ANOVAs on the DVs\n') 
-cat('\n(not part of the DFA; provided for comparisons with the ANOVAs on the Discriminant Functions):\n\n')
+cat('\n\n\n\nOne-way ANOVAs on the original DVs\n') 
+cat('\n(provided for comparisons with the ANOVAs on the discriminant functions):\n\n')
 dimnames(anovaDVoutput) <-list(rep("", dim(anovaDVoutput)[1]))
 colnames(anovaDVoutput) <- c('Eta-squared','          F','    df','    df','        p')
 rownames(anovaDVoutput) <- variables
@@ -243,12 +243,12 @@ anovaDVoutput[,5] <- round(anovaDVoutput[,5],4)
 print(anovaDVoutput)
 
 
-cat('\n\n\n\nT-tests and effect sizes for group differences on the DFs:\n\n')
+cat('\n\n\n\nt-tests and effect sizes for group differences on the DFs:\n\n')
 print(ttestDFoutput)
 
 
-cat('\n\n\n\nT-tests and effect sizes for group differences on the DVs:\n')
-cat('\n(not part of the DFA; provided for comparisons with the T-tests on the Discriminant Functions)\n\n')
+cat('\n\n\n\nt-tests and effect sizes for group differences on the DVs\n')
+cat('\n(provided for comparisons with the t-tests on the discriminant functions):\n\n')
 print(ttestDVoutput)
 
 

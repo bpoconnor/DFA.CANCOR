@@ -33,7 +33,9 @@ res4 = MVN::mvn(data = ContinuousVariables,  mvnTest = "dh",  desc = FALSE)
 
 
 cat('\n\nDescriptive Statistics:\n\n')
-print(res1$"Descriptives")
+descstats <- res1$"Descriptives"
+descstats <- descstats[,-c(7,8)]
+print(round(descstats,3))
 
 cat('\n\n\nShapiro-Wilk tests of univariate normality:\n\n')
 print(res1$"univariateNormality")
