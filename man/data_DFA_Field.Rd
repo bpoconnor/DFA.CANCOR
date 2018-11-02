@@ -17,6 +17,6 @@ head(data_DFA_Field)
 DFA(data = data_DFA_Field, 
     groups = 'Group', 
     variables = c('Actions','Thoughts'),
-    normtests = 'no', priorprob = 'SIZES', predictive = 'yes')
+    , priorprob = 'SIZES', predictive = 'yes')
 }
 }
