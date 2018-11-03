@@ -30,41 +30,43 @@ q <- ncol(set2data)
 
 invisible(utils::capture.output( pW <-  ((CCP::p.asym(rho, N, p, q, tstat = "Wilks"))) ))
 dmat <- cbind(pW$stat, pW$approx, pW$df1, pW$df2, pW$p.value )
-colnames(dmat) <- c('            Wilks Lambda', '     F-approx. ', '     df1', '          df2', '         p')
+colnames(dmat) <- c('            Wilks Lambda', '   F-approx. ', '  df1', '    df2', '         p')
 rownames(dmat) <- paste(1:nrow(dmat), paste("through ", nrow(dmat), sep = ""))
 print(round(dmat,4)); cat('\n\n')
 
 invisible(utils::capture.output( pH <- CCP::p.asym(rho, N, p, q, tstat = "Hotelling") ))
 dmat <- cbind(pH$stat, pH$approx, pH$df1, pH$df2, pH$p.value )
-colnames(dmat) <- c('  Hotelling-Lawley Trace', '     F-approx. ', '     df1', '          df2', '         p')
+colnames(dmat) <- c('  Hotelling-Lawley Trace', '   F-approx. ', '  df1', '    df2', '         p')
 rownames(dmat) <- paste(1:nrow(dmat), paste("through ", nrow(dmat), sep = ""))
 print(round(dmat,4)); cat('\n\n')
 
 invisible(utils::capture.output( pP <- CCP::p.asym(rho, N, p, q, tstat = "Pillai") ))
 dmat <- cbind(pP$stat, pP$approx, pP$df1, pP$df2, pP$p.value )
-colnames(dmat) <- c('   Pillai-Bartlett Trace', '     F-approx. ', '     df1', '          df2', '         p')
+colnames(dmat) <- c('   Pillai-Bartlett Trace', '   F-approx. ', '  df1', '    df2', '         p')
 rownames(dmat) <- paste(1:nrow(dmat), paste("through ", nrow(dmat), sep = ""))
 print(round(dmat,4)); cat('\n\n')
 
 invisible(utils::capture.output( pR <- CCP::p.asym(rho, N, p, q, tstat = "Roy") ))
 dmat <- cbind(pR$stat, pR$approx, pR$df1, pR$df2, pR$p.value )
-colnames(dmat) <- c('      Roy\'s Largest Root', '     F-approx. ', '     df1', '          df2', '         p')
+colnames(dmat) <- c('      Roy\'s Largest Root', '   F-approx. ', '  df1', '    df2', '         p')
 rownames(dmat) <- paste(1:nrow(dmat), paste("through ", nrow(dmat), sep = ""))
 print(round(dmat,4)); cat('\n\n')
 
 
 # bivariate correlations for the canonical variates
-bicortests <- matrix(-9999,ncol(CCoutput$scores$xscores),5)
+bicortests <- matrix(-9999,ncol(CCoutput$scores$xscores),6)
 for (nfunction in 1:ncol(CCoutput$scores$xscores)) {
-	correl <- stats::cor(CCoutput$scores$xscores[,nfunction],CCoutput$scores$yscores[,nfunction] )	
+	correl <- stats::cor(CCoutput$scores$xscores[,nfunction],CCoutput$scores$yscores[,nfunction] )		
+	eigval <- correl**2 / (1 - correl**2)	
 	dd <- stats::cor.test( CCoutput$scores$xscores[,nfunction],CCoutput$scores$yscores[,nfunction]) 	
-	bicortests[nfunction,] <- cbind(correl, correl**2, dd$statistic, dd$parameter, dd$p.value)
+	bicortests[nfunction,] <- cbind(eigval, correl, correl**2, dd$statistic, dd$parameter, dd$p.value)
 }
 cat('\n\n\nCanonical correlations:\n\n')
-colnames(bicortests) <- c('  canonical r', '   canonical r sq.','         t','     df','   p value')
+colnames(bicortests) <- c('  eigenvalue', '  canonical r', '   canonical r sq.','         t','     df','   p value')
 rownames(bicortests) <- paste(" Canonical function ", 1:nrow(bicortests),sep = "")
-print(round(bicortests,2))
-cat('\nThe above t tests are for the Pearson correlations between the canonical variate scores for each function.\n\n')
+print(round(bicortests,3))
+cat('\nThe above t tests are for the Pearson correlations between the canonical variate scores')
+cat('\nfor each function, i.e., they are not the multivariate significance tests.\n\n')
 
 
 # raw canonical coefficients
@@ -117,11 +119,12 @@ if (plot == 'yes' | plot == 'YES' | is.null(plot)) {
 	if (is.null(plot)) plotCV = 1
 #	cca.fit <- yacca::cca(set1data, set2data)
 #	yacca::helio.plot(cca.fit, x.name="Set 1", y.name="Set 2", cv=plotCV)
-	boc.fit <- list( xstructcorr=struct11, ystructcorr=struct22, xstructcorrsq=struct11**2, ystructcorrsq=struct22**2,
-               xlab=rownames(struct11), ylab=rownames(struct22) )
+	boc.fit <- list( xstructcorr=struct11, ystructcorr=struct22, xstructcorrsq=struct11**2,
+                     ystructcorrsq=struct22**2, xlab=rownames(struct11), ylab=rownames(struct22) )
 	yacca::helio.plot(boc.fit, x.name="Set 1", y.name="Set 2", cv=plotCV)
-	cat('\n\n\nThe plot is provided by the yacca package. Helio plots display data in radial bars, with larger ')
-	cat('\nvalues pointing outward from a base reference circle and smaller (more negative) values pointing inward.')
+	cat('\n\n\nThe plot is provided by the yacca package. Helio plots display data in')
+	cat('\nradial bars, with larger values pointing outward from a base reference circle')
+	cat('\nand smaller (more negative) values pointing inward.')
 }
 
 
