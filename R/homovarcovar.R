@@ -5,8 +5,9 @@ homovarcovar <- function( donnes ) {
 
 cat('\n\nTests for Homogeneity of Variances & Covariances:\n')
 
-grpnames <- unique(donnes[,1])
-ngroups <- length(grpnames)
+grpnames <- as.vector(as.matrix(donnes[,1])) # group names, in the same order as in the data matrix
+grpnames <- unique(grpnames)
+ngroups  <- length(grpnames)
 
 if (is.factor(donnes[,1]) == F)  donnes[,1] <- factor( donnes[,1], ordered = FALSE, labels=grpnames)
 

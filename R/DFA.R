@@ -7,8 +7,10 @@ cat('\n\n\n\nLinear Discriminant Function Analysis:\n')
 
 donnes <- cbind(data[,groups],data[,variables])
 
-grpnames <- unique(donnes[,1])
-ngroups <- length(grpnames)
+grpnames <- as.vector(as.matrix(donnes[,1])) # group names, in the same order as in the data matrix
+grpnames <- unique(grpnames)
+grpnums  <- seq(1:length(grpnames))
+ngroups  <- length(grpnames)
 
 if (is.factor(donnes[,1]) == F)  donnes[,1] <- factor(donnes[,1], ordered = FALSE, labels=grpnames)
 
@@ -243,11 +245,11 @@ anovaDVoutput[,5] <- round(anovaDVoutput[,5],4)
 print(anovaDVoutput)
 
 
-cat('\n\n\n\nt-tests and effect sizes for group differences on the DFs:\n\n')
+cat('\n\n\n\nt-tests and effect sizes for group differences on the discriminant functions:\n\n')
 print(ttestDFoutput)
 
 
-cat('\n\n\n\nt-tests and effect sizes for group differences on the DVs\n')
+cat('\n\n\n\nt-tests and effect sizes for group differences on the original DVs\n')
 cat('\n(provided for comparisons with the t-tests on the discriminant functions):\n\n')
 print(ttestDVoutput)
 
@@ -255,10 +257,10 @@ print(ttestDVoutput)
 # plot
 colnames(centroidsZ) <-  c(paste("DF ", 1:ncol(centroidSDsZ), sep=""))
 
-graphics::matplot(1:length(grpnames), centroidsZ[,1:2], type = "l", lty=1, lwd=3, 
+graphics::matplot(1:length(grpnames), centroidsZ, type = "l", lty=1, lwd=3, 
         xaxt='n', xlab=groups, cex.axis=1.2, cex.lab = 1.3,
         ylab='Discriminant Function z Scores', ylim = c(-3, 3), cex.axis=1.2        )
-graphics::axis(side=1, at=grpnames, labels=grpnames, xlab="groups")
+graphics::axis(side=1, at=grpnums, labels=rownames(centroidsZ), xlab="groups")
 graphics::title(main='Mean Standardized Discriminant Function Scores for the Groups')
 graphics::legend("topright", legend = colnames(centroidsZ), bty="n", lwd=2, col=1:ncol(centroidsZ))
 
