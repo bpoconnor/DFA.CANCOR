@@ -51,6 +51,7 @@
   \item{centroidSDs}{group standard deviations on the unstandardized functions}
   \item{centroidsZ}{standardized canonical discriminant functions evaluated at the group means}
   \item{centroidSDsZ}{group standard deviations on the standardized functions}
+  \item{DFAscores}{scores on the discriminant functions}
 }
 \references{
        {Bird, K. D., & Hadzi-Pavlovic, D. (2013). Controlling the maximum familywise Type I error 
