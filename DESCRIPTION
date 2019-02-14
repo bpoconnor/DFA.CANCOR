@@ -2,7 +2,7 @@ Package: DFA.CANCOR
 Type: Package
 Title: Linear Discriminant Function and Canonical Correlation Analysis
 Version: 0.1.1
-Date: 2019-02-13
+Date: 2019-02-14
 Author: Brian P. O'Connor 
 Maintainer: Brian P. O'Connor  <brian.oconnor@ubc.ca>
 Description:
