@@ -509,7 +509,8 @@ DFAoutput <- list(
    centroids=centroids,
    centroidSDs=centroidSDs,
    centroidsZ=centroidsZ,
-   centroidSDsZ=centroidSDsZ )
+   centroidSDsZ=centroidSDsZ,
+   DFAscores=lda.values$x )
 
 return(invisible(DFAoutput))
 
