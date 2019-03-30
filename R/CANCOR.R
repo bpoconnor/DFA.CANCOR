@@ -4,12 +4,6 @@ CANCOR <- function(data, set1, set2, plot='yes', plotCV=1 ) {
 cat('\n\nCanonical Correlation Analysis:\n\n')
 
 data <- as.data.frame(data[,c(set1,set2)])
-
-# if ( all(complete.cases(data)) == 'FALSE' ) {
-# cat("\n\nWARNING: There were missing values in the data matrix. 
-	      # Casewise deletion was used to eliminate the missing values.\n\n")
-	# data <- na.omit(data)
-# }
  
 if (anyNA(data) == TRUE) {
 	data <- na.omit(data)
