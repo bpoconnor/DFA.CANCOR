@@ -3,17 +3,17 @@ CANCOR <- function(data, set1, set2, plot='yes', plotCV=1 ) {
 
 cat('\n\nCanonical Correlation Analysis:\n\n')
 
-donnes <- as.data.frame(data[,c(set1,set2)])
+data <- as.data.frame(data[,c(set1,set2)])
 
-if ( all(complete.cases(donnes)) == 'FALSE' ) {
+if ( all(complete.cases(data)) == 'FALSE' ) {
 cat("\n\nWARNING: There were missing values in the data matrix. 
 	      Casewise deletion was used to eliminate the missing values.\n\n")
-	donnes <- na.omit(donnes)
+	data <- na.omit(data)
 
  }
 
-set1data <- as.data.frame(donnes[,set1])
-set2data <- as.data.frame(donnes[,set2])
+set1data <- as.data.frame(data[,set1])
+set2data <- as.data.frame(data[,set2])
 
 
 # descriptive statistics & tests of univarite & multivariate normality -- from the MVN package

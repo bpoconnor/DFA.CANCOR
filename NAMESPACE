@@ -1,7 +1,7 @@
 export(DFA,CANCOR)
 
-importFrom("stats", "aggregate", "anova", "bartlett.test", "cor",
-           "cor.test", "cov", "fligner.test", "lm", "na.omit", "pf",
+importFrom("stats", "aggregate", "anova", "bartlett.test","complete.cases",
+           "cor","cor.test", "cov", "fligner.test", "lm", "na.omit", "pf",
            "predict", "sd", "t.test", "pt", "qf", "qt", "qtukey")
 
 importFrom("car", "Anova")
