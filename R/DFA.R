@@ -8,12 +8,19 @@ cat('\n\n\n\nLinear Discriminant Function Analysis:\n')
 
 donnes <- as.data.frame(data[,c(groups,variables)])
 
-if ( all(complete.cases(donnes)) == 'FALSE' ) {
-cat("\n\nWARNING: There were missing values in the data matrix. 
-	      Casewise deletion was used to eliminate the missing values.\n\n")
-	donnes <- na.omit(donnes)
-}
+# if ( all(complete.cases(donnes)) == 'FALSE' ) {
+# cat("\n\nWARNING: There were missing values in the data matrix. 
+	      # Casewise deletion was used to eliminate the missing values.\n\n")
+	# donnes <- na.omit(donnes)
+# }
 #donnes <- cbind(data[,groups],data[,variables])
+
+
+if (anyNA(donnes) == TRUE) {
+	donnes <- na.omit(donnes)
+	cat('\n\nCases with missing values were found and removed from the data matrix.\n\n')
+}
+
 
 grpnames <- as.vector(as.matrix(donnes[,1])) # group names, in the same order as in the data matrix
 grpnames <- unique(grpnames)
