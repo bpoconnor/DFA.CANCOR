@@ -8,11 +8,11 @@
 \usage{data(data_CCA_De_Leo)}
 
 \source{De Leo, J. A., & Wulfert, E. (2013). Problematic internet use and other risky 
-	behaviors in college students: An application of problem-behavior theory. Psychology 
-	of Addictive Behaviors, 27(1), 133-141. }
+	behaviors in college students: An application of problem-behavior theory. \emph{Psychology 
+	of Addictive Behaviors, 27(1),} 133-141. }
 
 \examples{ 
-\dontrun{
+\donttest{
 head(data_CCA_De_Leo)
      
 # data that simulate those from De Leo & Wulfert (2013)

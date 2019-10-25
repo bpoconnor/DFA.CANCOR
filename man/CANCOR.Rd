@@ -2,8 +2,8 @@
 \alias{CANCOR}
 \title{Canonical correlation analysis}
 \description{This function provides SPSS- and SAS-like output for canonical 
-	correlation analysis. It uses functions from the CCA, CCP, MVN, and yacca packages.}
-\usage{CANCOR(data, set1, set2, plot, plotCV)}
+	correlation analysis. Portions of the code were adapted from James Steiger (www.statpower.net).}
+\usage{CANCOR(data, set1, set2, plot, plotCV, plotcoefs)}
 \arguments{
   \item{data}{
   \code{}A dataframe where the rows are cases & the columns are the variables.}
@@ -17,17 +17,20 @@
    \cr e.g., set2 = c('varD', 'varE', 'varF').}
 
   \item{plot}{
-  \code{}Should a helio plot of the structure coefficients be produced?
-   \cr The options are: 'yes' or 'no'.}
+  \code{}Should a plot of the coefficients be produced? The options are: 'yes' or 'no'.}
 
   \item{plotCV}{
-  \code{}The canonical variate number for the helio plot, e.g., plotCV = 1.}
+  \code{}The canonical variate number for the plot, e.g., plotCV = 1.}
+
+  \item{plotcoefs}{
+  \code{}The coefficient for the plots. The options are 'structure' or 'standardized'.}
 
 }
 \value{The displayed output includes descriptive statistics and Pearson correlations,
 	   tests of univariate and multivariate normality, multivariate significance tests,
-	   canonical function correlations and bivariate significance tests, raw canonical coefficients,
-	   structure coefficients, standardized coefficients, and a helio plot of the structure coefficients.
+	   canonical function correlations and bivariate significance tests, raw canonical 
+	   coefficients, structure coefficients, standardized coefficients, and a bar plot  
+	   of the structure or standardized coefficients.
 	   
 	   
 	   The returned output is a list with elements
@@ -43,9 +46,13 @@
   \item{standCoefSet2}{standardized coefficients for Set 2 variables}
 }
 \references{
-       {Sherry, A., & Henson, R. K. (2005). Conducting and interpreting canonical correlation analysis
-        in personality research: A user-friendly primer. Journal of Personality Assessment, 84, 37-48.}
-\cr\cr {Tabachnik, B. G., & Fidell, L. S. (2013). Using multivariate statistics (6th ed.). New York, NY: Pearson.}
+	   {Manly, B. F. J., & Alberto, J. A. (2017). \emph{Multivariate statistical methods: 
+	   	A primer (4th Edition).} Chapman & Hall/CRC, Boca Raton, FL.}
+\cr\cr {Sherry, A., & Henson, R. K. (2005). Conducting and interpreting canonical correlation analysis
+        in personality research: A user-friendly primer. \emph{Journal of Personality Assessment, 84,} 37-48.}
+\cr\cr {Steiger, J. (2019). \emph{Canonical correlation analysis.}
+	    \cr{www.statpower.net/Content/312/Lecture\%20Slides/CanonicalCorrelation.pdf}}
+\cr\cr {Tabachnik, B. G., & Fidell, L. S. (2013). \emph{Using multivariate statistics (6th. ed.).} New York, NY: Pearson.}
 }
 \author{Brian P. O'Connor }
 \examples{
@@ -56,14 +63,14 @@ CANCOR(data = na.omit(data_CCA_De_Leo),
        set2 = c('Impulsivity','Social_Interaction_Anxiety','Depression',
                 'Social_Support','Intolerance_of_Deviance','Family_Morals',
                 'Family_Conflict','Grade_Point_Average'),
-       plot = 'yes', plotCV = 1)
+       plot = 'yes', plotCV = 1, plotcoefs='structure')
 
-\dontrun{
+\donttest{
 # data from Tabachnik & Fidell (2013, p. 589)
 CANCOR(data = data_CCA_Tabachnik,
        set1 = c('TS','TC'),
        set2 = c('BS','BC'),
-       plot = 'yes', plotCV = 1)
+       plot = 'yes', plotCV = 1, plotcoefs='structure')
 
 # UCLA dataset
 UCLA_CCA_data <- read.csv("https://stats.idre.ucla.edu/stat/data/mmreg.csv")
@@ -73,7 +80,7 @@ summary(UCLA_CCA_data)
 CANCOR(data = UCLA_CCA_data, 
        set1 = c("LocusControl","SelfConcept","Motivation"),
        set2 = c("read","write","math","science","female"),
-       plot = 'yes', plotCV = 1)
+       plot = 'yes', plotCV = 1, plotcoefs='standardized')
 }
 
 }

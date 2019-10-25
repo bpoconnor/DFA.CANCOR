@@ -6,9 +6,9 @@
 	Used by Sherry (2006) in her article on discriminant function analysis.}
 \usage{data(data_DFA_Sherry)}
 \source{Sherry, A. (2006). Discriminant analysis in counseling research. 
-	Counseling Psychologist, 34, 661-683.}
+	\emph{Counseling Psychologist, 34,} 661-683.}
 \examples{
-\dontrun{
+\donttest{
 head(data_DFA_Sherry)
      
 DFA(data = data_DFA_Sherry, 

@@ -8,15 +8,15 @@
 \usage{data(data_DFA_Field)}
 
 \source{
-Field, A., Miles, J., & Field, Z. (2012). Discovering statistics using R. Los Angeles, CA: Sage. }
+Field, A., Miles, J., & Field, Z. (2012). \emph{Discovering statistics using R.} Los Angeles, CA: Sage. }
 
 \examples{
-\dontrun{
+\donttest{
 head(data_DFA_Field)
 	 
 DFA(data = data_DFA_Field, 
     groups = 'Group', 
     variables = c('Actions','Thoughts'),
-    , priorprob = 'SIZES', predictive = 'yes')
+    priorprob = 'SIZES', predictive = 'yes')
 }
 }

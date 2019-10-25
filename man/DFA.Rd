@@ -2,7 +2,7 @@
 \alias{DFA}
 \title{Discriminant function analysis}
 \description{This function provides SPSS- and SAS-like output for linear discriminant 
-	function analysis. It uses functions from the car, CPP, MASS, MVN, and irr packages.}
+	function analysis. It uses functions from the MASS and MVN packages.}
 \usage{DFA(data, groups, variables, normtests, priorprob, predictive)}
 \arguments{
   \item{data}{
@@ -55,9 +55,12 @@
 }
 \references{
        {Bird, K. D., & Hadzi-Pavlovic, D. (2013). Controlling the maximum familywise Type I error 
-       	rate in analyses of multivariate experiments. Psychological Methods, 19(2), p. 265-280.}
-\cr\cr {Sherry, A. (2006). Discriminant analysis in counseling research. Counseling Psychologist, 34, 661-683..}
-\cr\cr {Tabachnik, B. G., & Fidell, L. S. (2013). Using multivariate statistics (6th ed.). New York, NY: Pearson.}
+       	rate in analyses of multivariate experiments. \emph{Psychological Methods, 19(2),} p. 265-280.}
+\cr\cr {Manly, B. F. J., & Alberto, J. A. (2017). \emph{Multivariate statistical methods: 
+	   	A primer (4th Edition).} Chapman & Hall/CRC, Boca Raton, FL.}
+\cr\cr {Sherry, A. (2006). Discriminant analysis in counseling research. \emph{Counseling Psychologist, 34,} 661-683..}
+\cr\cr {Tabachnik, B. G., & Fidell, L. S. (2013). \emph{Using multivariate statistics (6th ed.).} New York, NY: Pearson.}
+\cr\cr {Venables, W. N. & Ripley, B. D. (2002). \emph{Modern Applied Statistics with S (4th ed.).} Springer, New York.}
 }
 \author{Brian P. O'Connor }
 \examples{
@@ -66,7 +69,7 @@ DFA(data = data_DFA_Field,
     variables = c('Actions','Thoughts'),
     normtests = 'yes', priorprob = 'SIZES', predictive = 'yes')
 
-\dontrun{
+\donttest{
 DFA(data = data_DFA_Sherry, 
     groups = 'Group',
     variables = c('Neuroticism','Extroversion','Openness',

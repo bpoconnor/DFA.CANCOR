@@ -5,10 +5,10 @@
 \description{A data frame with scores on 4 variables for 8 cases. Used by 
 	Tabachnik & Fidell (2013, p. 589) in their chapter on canonical correlation.}
 \usage{data(data_CCA_Tabachnik)}
-\source{Tabachnik, B. G., & Fidell, L. S. (2013). Using multivariate 
-	statistics (6th ed.). New York, NY: Pearson.}
+\source{Tabachnik, B. G., & Fidell, L. S. (2013). \emph{Using multivariate 
+	statistics (6th ed.).} New York, NY: Pearson.}
 \examples{
-\dontrun{
+\donttest{
 head(data_CCA_Tabachnik)
 	
 # data from Tabachnik & Fidell (2013, p. 589)
