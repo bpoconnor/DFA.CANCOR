@@ -1,6 +1,4 @@
 
-
-
 DFA <- function(data, groups, variables, normtests='yes', priorprob='SIZES', predictive='yes') {
 
 cat('\n\n\n\nLinear Discriminant Function Analysis:\n')
@@ -18,6 +16,11 @@ grpnames <- as.vector(as.matrix(donnes[,1])) # group names, in the same order as
 grpnames <- unique(grpnames)
 grpnums  <- seq(1:length(grpnames))
 ngroups  <- length(grpnames)
+nDVs <- ncol(donnes) - 1
+N <- nrow(donnes)
+
+Ncases <- nrow(donnes)
+
 
 if (is.factor(donnes[,1]) == F)  donnes[,1] <- factor(donnes[,1], ordered = FALSE, labels=grpnames)
 
@@ -104,37 +107,36 @@ colnames(evals) <- c('Function','  eigenvalue','     proportion of variance','  
 print(round(evals,3))
 
 
+
 cat('\n\n\nMultivariate peel-down significance tests:\n\n')  # using p.asym from the CCP package
 
+# July, 2019: for CCA, the CCP::p.asym function uses the #s of vars in set1 and set2
+# as the values for p & q; but to get correct results for DFA using this function,
+# p = the # of DVs and q = the # of DFs -- at least that what seems to yield correct values
+
 rho <- evals[,4]
-N <- nrow(donnes)
-p <- length(variables)
-q <- length(evals[,4])
+NCVs <- nrow(evals)
 
+mvFmat <- Wilks(rho=rho, Ncases=Ncases, p = NCVs, q = nDVs)
+colnames(mvFmat) <- c('            Wilks Lambda', '   F-approx. ', '  df1', '    df2', '         p')
+rownames(mvFmat) <- paste(1:nrow(mvFmat), paste("through ", nrow(mvFmat), sep = ""))
+print(round(mvFmat,4)); cat('\n\n')
 
-invisible(utils::capture.output(pW <-  ((CCP::p.asym(rho, N, p, q, tstat = "Wilks")))))
-dmat <- cbind(round(pW$stat,2), round(pW$approx,2), pW$df1, pW$df2, round(pW$p.value,5))
-colnames(dmat) <- c('            Wilks Lambda', '   F-approx. ', '  df1', '    df2', '         p')
-rownames(dmat) <- paste(1:nrow(dmat), paste("through ", nrow(dmat), sep = ""))
-print((dmat)); cat('\n\n')
+mvFmat <- Pillai(rho=rho, Ncases=Ncases, p = NCVs, q = nDVs)
+colnames(mvFmat) <- c('  Pillai-Bartlett Trace', '   F-approx. ', '  df1', '    df2', '         p')
+rownames(mvFmat) <- paste(1:nrow(mvFmat), paste("through ", nrow(mvFmat), sep = ""))
+print(round(mvFmat,4)); cat('\n\n')
 
-invisible(utils::capture.output(pH <- CCP::p.asym(rho, N, p, q, tstat = "Hotelling")))
-dmat <- cbind(round(pH$stat,2), round(pH$approx,2), pH$df1, pH$df2, round(pH$p.value,5))
-colnames(dmat) <- c('  Hotelling-Lawley Trace', '   F-approx. ', '  df1', '    df2', '         p')
-rownames(dmat) <- paste(1:nrow(dmat), paste("through ", nrow(dmat), sep = ""))
-print(round(dmat,4)); cat('\n\n')
+mvFmat <- Hotelling(rho=rho, Ncases=Ncases, p = NCVs, q = nDVs)
+colnames(mvFmat) <- c('   Hotelling-Lawley Trace', '   F-approx. ', '  df1', '    df2', '         p')
+rownames(mvFmat) <- paste(1:nrow(mvFmat), paste("through ", nrow(mvFmat), sep = ""))
+print(round(mvFmat,4)); cat('\n\n')
 
-invisible(utils::capture.output(pP <- CCP::p.asym(rho, N, p, q, tstat = "Pillai")))
-dmat <- cbind(round(pP$stat,2), round(pP$approx,2), pP$df1, pP$df2, round(pP$p.value,5))
-colnames(dmat) <- c('   Pillai-Bartlett Trace', '   F-approx. ', '  df1', '    df2', '         p')
-rownames(dmat) <- paste(1:nrow(dmat), paste("through ", nrow(dmat), sep = ""))
-print(round(dmat,4)); cat('\n\n')
+mvFmat <- RoyRoot(rho=rho, Ncases=Ncases, p = NCVs, q = nDVs)
+colnames(mvFmat) <- c('      Roy\'s Largest Root', '   F-approx. ', '  df1', '    df2', '         p')
+rownames(mvFmat) <- paste(1:nrow(mvFmat), paste("through ", nrow(mvFmat), sep = ""))
+print(round(mvFmat,4)); cat('\n\n')
 
-invisible(utils::capture.output(pR <- CCP::p.asym(rho, N, p, q, tstat = "Roy")))
-dmat <- cbind(round(pR$stat,2), round(pR$approx,2), pR$df1, pR$df2, round(pR$p.value,5))
-colnames(dmat) <- c('      Roy\'s Largest Root', '   F-approx. ', '  df1', '    df2', '         p')
-rownames(dmat) <- paste(1:nrow(dmat), paste("through ", nrow(dmat), sep = ""))
-print(round(dmat,4)); cat('\n\n')
 
 
 cat('\n\n\n\nCanonical Discriminant Function (raw) Coefficients:\n')
@@ -344,7 +346,7 @@ if (ngroups > 2) {
 	# *** Critical values for analyses controlling MFWER when k >= 3 ***. 
 	# N <- N
 	K <- ngroups
-	P <- p 
+	P <- nDVs 
 	ALPHA <- .05
 	# *** Critical t and p values and confidence level for t' analysis ***.
 	TCRIT <- qtukey((1-ALPHA)**(1/P),K,N-K)/sqrt(2)
@@ -439,7 +441,7 @@ print(freqs)
 cat('\n\nProportion of original grouped cases correctly classified:  ',
     round((sum(diag(freqs)) / sum(freqs)),3))
 
-cat('\n\n\nChi-square test of indepedence:\n')
+cat('\n\n\nChi-square test of independence:\n')
 print(summary(freqs)) # chi-square test of indepedence
 
 cat('\n\nRow Frequencies:\n\n')
@@ -454,10 +456,10 @@ print(round(prop.table(freqs, 1),2))
 cat('\n\nColumn-Based Proportions:\n\n')
 print(round(prop.table(freqs, 2),2)) 
 
-# kappas
+# 
 cat('\n\nAgreement (kappas) between the Predicted and Original Group Memberships:\n\n')
 kappas_cvo <- kappas(stats::na.omit(cbind(lda.values$class, donnes[,1])))
-print(round(kappas_cvo,3))
+print(kappas_cvo,3)
 
 
 # Frequencies: Original vs Cross-Validated (leave-one-out cross-validation)
@@ -498,12 +500,12 @@ print(round(prop.table(freqsCVP, 2),2))
 # kappas
 cat('\n\nAgreement (kappas) between the Cross-Validated and Original Group Memberships:\n\n')
 kappas_cvo <- kappas(stats::na.omit(cbind(ldaoutputCV$class, donnes[,1])))
-print(round(kappas_cvo,3))
+print(kappas_cvo)
 
 # kappas
 cat('\n\nAgreement (kappas) between the Cross-Validated and Predicted Group Memberships:\n\n')
 kappas_cvp <- kappas(stats::na.omit(cbind(ldaoutputCV$class, lda.values$class)))
-print(round(kappas_cvp,3))
+print(kappas_cvp,3)
 cat('\n\n\n')
 
 }
