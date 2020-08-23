@@ -1,8 +1,6 @@
 # DFA.CANCOR
 Discriminant function analysis &amp; canonical correlation analysis
 
-## LagSequential
-
 DFA.CANCOR is an R package that was previously on GitHub.
 
 The DFA.CANCOR package is now on the R CRAN site:
