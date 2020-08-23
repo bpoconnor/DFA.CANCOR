@@ -1,0 +1,15 @@
+export(DFA,CANCOR)
+
+importFrom("stats", "aggregate", "anova", "bartlett.test",
+           "cor","cor.test", "cov", "fligner.test", "lm", "manova",
+           "na.omit",  "pchisq", "pf", "pnorm", "predict", "sd", "t.test", "pt",
+           "qf", "qt", "qtukey", "var")
+
+importFrom("MASS", "lda")
+
+importFrom("MVN", "mvn")
+
+importFrom("graphics", "matplot", "axis", "legend", "title", "barplot", "box", "par")
+
+importFrom("utils", "capture.output")
+
